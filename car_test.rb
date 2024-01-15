@@ -11,7 +11,7 @@ class CarTest < Minitest::Test
   end
 
   def test_bad_wheels
-    skip
+    #skip
     car = Car.new
     assert_equal(3, car.wheels)
   end
