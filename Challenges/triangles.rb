@@ -1,64 +1,88 @@
 =begin
-P: determine whether a triangle is equilateral, isosceles, or scalene.
-  rules: - each side must be > 0
-         - the sum of any 2 sides must be > than the last side
-         - equilateral triangle has three sides of equal length
-         - isosceles triangle has exactly two sides of the equal length
-         - scalene triangle has three sides of unequal length (no two sides have equal length)
+P: write a program to determine a triangle's type
+  input: 3 integers
+  output: string
+  rules : An equilateral triangle has all three sides the same length.
+          An isosceles triangle has exactly two sides of the same length.
+          A scalene triangle has all sides of different lengths.
+          Make sure it's a triangle: all sides must be > 0
+                                     sum of any two side must > third side
 
----------------- Examples (modeling)
+E: see given test cases
 
+D:
+A: - create initialize method
+      - put all sides in an array
+      - raise error if any side == 0
+      - raise error if any 2 sides < 3rd side
+        - iterate over array
+        - check if array.first > array[1] + array.last
+        - check if array[1] > array. first + array.last
+        - check if array.last > array.first + array[1]
+        - if any are true raise above error
 
-
----------------- Data Structures
-- a method that accepts three arguments rep. the three sides
-  - best to use an array to store the three values
-- a method that returns a string representing the type of the triangle
-
----------------- Algorithm
-  constructor method
-   - save the three sides
-   - Check whether any side length is less than or equal to zero.
-      If so, raise an exception.
-   - Use comparisons to determine whether the sum of any two side lengths
-     is less than or equal to the length of the third side.
-     If so, raise an exception.
-
-  'kind' method
-    - compare the three sides
-    - if all are equal, return 'equilateral'
-    - if the triangle is not equilateral, but any two side lengths are equal
-      to one another, return 'isosceles'
-    - If none of the side lengths are equal to one another, return 'scalene'
+  - create kind method
+      - check if all? == array.first
+        - return 'equilaterel'
+      - check if any 2 are the same
+         - call uniq on sides, if count == 2
+         - return 'isosceles'
+       - check if all are different
+         - call uniq on sides, if empty, return 'scalene'
 =end
 
 class Triangle
-  attr_reader :sides
-
   def initialize(side1, side2, side3)
     @sides = [side1, side2, side3]
-    raise ArgumentError.new "Invalid triangle lengths" unless valid?
+
+    if @sides.any? { |side| side.sero? } ||
+       @sides.first >= @sides[1] + @sides.last ||
+       @sides[1] >= @sides.first + @sides.last ||
+       @sides.last >= @sides.first + @sides[1]
+       raise ArgumentError.new("Invalid lengths for a triangle")
+    end
   end
 
   def kind
-    if sides.uniq.size == 1
+    if @sides.all? { |side| side == @sides.first }
       'equilateral'
-    elsif sides.uniq.size == 2
+    elsif @sides.uniq.count == 2
       'isosceles'
     else
       'scalene'
     end
   end
-
-  private
-
-  def valid?
-    sides.min > 0 &&
-    sides[0] + sides[1] > sides[2] &&
-    sides[1] + sides[2] > sides[0] &&
-    sides[0] + sides[2] > sides[1]
-  end
 end
 
-eq = Triangle.new(7,11,9)
-p eq.kind
+
+#LS Solution
+# class Triangle
+#   attr_reader :sides
+
+#   def initialize(side1, side2, side3)
+#     @sides = [side1, side2, side3]
+#     raise ArgumentError.new "Invalid triangle lengths" unless valid?
+#   end
+
+#   def kind
+#     if sides.uniq.size == 1
+#       'equilateral'
+#     elsif sides.uniq.size == 2
+#       'isosceles'
+#     else
+#       'scalene'
+#     end
+#   end
+
+#   private
+
+#   def valid?
+#     sides.min > 0 &&
+#     sides[0] + sides[1] > sides[2] &&
+#     sides[1] + sides[2] > sides[0] &&
+#     sides[0] + sides[2] > sides[1]
+#   end
+# end
+
+# eq = Triangle.new(7,11,9)
+# p eq.kind

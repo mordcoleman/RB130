@@ -1,70 +1,67 @@
 =begin
-P: compare two 'strands', in this case strings of equal length at each index, add up them
-   up and return the total amount of 'mutations'. If the two lengths are unequal compare up
-   till the shorter length
-  i: strings
-  o: integer
-E:
-  GAGCCTACTAACGGGAT
-  CATCGTAATGACGGCCT
-  ^ ^ ^  ^ ^    ^^  There are 7 mutations
-D:
-  strings > array?
+P: Write a program that calculates the 'Hamming' distance between two string, i.e.
+   the number of times characters at the same index do not match up.
+  rules: if given strings of different length, compute up to the end of the shorter string
 
-A: We need to determine if one string is shorter, as well as iterate over
-   and compare both:
+E: based on the test cases, it seems there's a DNA class and a 'hamming_distance ',
+   the latter returns an integer, or 'the distance'
 
-  - constructor method accepts two strings
-    - save each to seperate variable
+D: strings, arrays, integer
 
-  - a (private)size method which determines which, if any is shorter, saves size to shorter
+A: - create DNA class, takes a string as argument
+- convert string to arrays of chars
+   - create hamming distance method, which takes other string
+     - convert each string to arrays of chars
+     - set counter to 0
+     - determine and assign short and long string to new vars
+       - at each index, check if is dif then char at other array index
+         - if yes, counter += 1
+         - if no, do nothing
+       - index plus 1
+     - return counter
 
-  - a comparing method that iterates over both, up until the size of the shorter
-    - a tally which starts at 0, at each iteration, if the two are different, increase by one
-    - return tally when finished
 =end
 
 class DNA
-  attr_reader :strand_1, :strand_2, :total_length
-
-  def initialize(strand_1, strand_2)
-    @strand_1 = strand_1.chars
-    @strand_2 = strand_2.chars
-    @total_length = size
-  end
-
-  def find_hamming
-    counter = 0
-    tally = 0
-    until counter == total_length
-      tally += 1 if strand_1[counter] != strand_2[counter]
-      counter += 1
-    end
-    tally
-  end
-
-  private
-  def size
-    strand_1.size < strand_2.size ? strand_1.size : strand_2.size
-  end
-end
-
-=begin LS Solution (better)
-
-class DNA
-  def initialize(strand)
-    @strand = strand
-  end
-
-  def hamming_distance(comparison)
-    shorter = @strand.length < comparison.length ? @strand : comparison
-    differences = 0
-
-    shorter.length.times do |index|
-      differences += 1 unless @strand[index] == comparison[index]
+    def initialize(string)
+      @string = string
     end
 
-    differences
+    def hamming_distance(other_string)
+      short = nil
+      long = nil
+
+      if @string.length > other_string.length
+        long = @string
+        short = other_string
+      else
+        long = other_string
+        short = @string
+      end
+
+      counter = 0
+      short.chars.each_with_index{|char, index| counter += 1 if char != long[index]}
+      counter
+    end
   end
-end
-=end
+
+#=begin LS Solution (better)
+
+# class DNA
+#   def initialize(strand)
+#     @strand = strand
+#   end
+
+#   def hamming_distance(comparison)
+#     shorter = @strand.length < comparison.length ? @strand : comparison
+#     differences = 0
+
+#     shorter.length.times do |index|
+#       differences += 1 unless @strand[index] == comparison[index]
+#     end
+
+#     differences
+#   end
+# end
+#=end
+

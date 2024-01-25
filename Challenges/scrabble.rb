@@ -1,62 +1,48 @@
-require 'pry'
 =begin
-P: given a word, compute the Scrabble score
-  i: string
-  o: integer
-   Use predetermined values in chart provided:
-   A, E, I, O, U, L, N, R, S, T — 1 point
-   D, G — 2 points
-   B, C, M, P. — 3 points
-   F, H, V, W, Y — 4 points
-   K — 5 points
-   J, X — 8 points
-   Q, Z — 10 points
+P: Given a word, compute it's Scrabble score
+  - use gicen chart to sum each letter, return score
+  - a whitespace character, space or nil is 0
+  - case insensitive
 
-E: CABBAGE > total of 14 points
-  We see that we need a Scrabble class with 3 methods:
-   - A constructor method wich accepts a word (string)
-   - score method, which iterates through the string and sums the score
-     - invalid words return 0
-     - words are case sensitive
-   - A class method also named score that takes word as an argument and returns score
+E: CABBAGE == 14
 
-D: string > array > hash > integer
+D: hash for letters and values -> string -> array for word chars -> integer
 
-A:  - hash with number as key and letters as value
-
-    - constructor method takes word
-      - save word, upcased, as array of chars to var
-      - verify that all chars are legit abc using regex or all values(helper)
-
-    - verify helper method
-
-    - score method
-      - init counter to 0
-      - verify that all chars are legit abc using regex or all values(helper)
-      - iterate over array
-        - at each index, find char in hash and add key to counter
-      - return counter
-
-     - class method use previous code
+A: - create Scrabble class
+   - create hash of letters & values
+   - create initialize method, takes string, saves as array of chars, upcased, or
+     nil if nil
+   - create score method
+     - init tally var to 0
+     - return tally if nil
+     - iterate over array of chars
+       - if char is included in key list (i.e. it's a letter), return it's value
+         and add to tally
+       - if not, next
+     - return tally
+   - create score class method, use instance method
 =end
-
 class Scrabble
-  attr_reader :word
-
-  SCORES = {1 => ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T'],
-            2 => ['D', 'G'], 3 => ['B', 'C', 'M', 'P'], 4=> ['F', 'H', 'V', 'W', 'Y'],
-            5 => ['K'], 8 => ['J', 'X'], 10 => ['Q', 'Z']}
+  SCORING = {%w(A E I O U L N R S T) => 1,
+             %w(, G) => 2,
+             %w(B C M P) => 3,
+             %w(F H V W Y) => 4,
+             %w(K) => 5,
+             %w(J X) => 8,
+             %w(Q Z) => 10 }
   def initialize(word)
-    @word = word ? word : " "
+    @array = (word == nil ?  nil: word.upcase.chars)
   end
 
   def score
-    letters = word.upcase.gsub(/[^A-Z]/, '').chars
-    counter = 0
-    letters.each do |char|
-      SCORES.each{|k, v| counter += k if v.include?(char)}
+    tally = 0
+    return tally if @array == nil
+
+    @array.each do |char|
+      SCORING.each {|key, value| tally += value if key.include?(char) }
     end
-    counter
+
+    tally
   end
 
   def self.score(word)
@@ -64,5 +50,3 @@ class Scrabble
   end
 end
 
-cabbage = Scrabble.new('CABBAGE')
-p cabbage.score
